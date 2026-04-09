@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Map — Clinic Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary:       #0891B2;
+      --primary-dark:  #0E7490;
+      --primary-light: #CFFAFE;
+      --secondary:     #22D3EE;
+      --accent:        #C8912E;
+      --accent-light:  #FEF3C7;
+      --bg:            #F0FDFA;
+      --card:          #FFFFFF;
+      --text:          #134E4A;
+      --muted:         #4B7B77;
+      --border:        #CBD5E1;
+      --error:         #EF4444;
+      --radius:        12px;
+      --shadow:        0 4px 24px rgba(8,145,178,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background: var(--bg);
+      background-image: radial-gradient(ellipse 700px 400px at 50% -80px, rgba(8,145,178,0.09), transparent);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── Header ──────────────────────────────────────── */
+    .header {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(8,145,178,0.1);
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 8px rgba(8,145,178,0.06);
+    }
+    .header-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 38px; height: 38px; flex-shrink: 0; }
+    .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .logo-name { font-family: 'Figtree', sans-serif; font-weight: 700; font-size: 17px; color: var(--primary); letter-spacing: -0.3px; }
+    .logo-tagline { font-size: 10.5px; color: var(--muted); letter-spacing: 0.4px; font-weight: 400; }
+
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ── Language Toggle ─────────────────────────────── */
+    .lang-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      padding: 2px;
+      gap: 2px;
+    }
+    .lang-btn {
+      padding: 3px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-family: 'Noto Sans', sans-serif;
+      transition: all 0.15s;
+      border-radius: 99px;
+      min-height: 28px;
+    }
+    .lang-btn.active { background: var(--primary); color: white; }
+
+    .step-counter {
+      font-size: 12.5px;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      padding: 4px 12px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+
+    /* ── Progress ────────────────────────────────────── */
+    .progress-wrap {
+      background: rgba(255,255,255,0.9);
+      padding: 0 24px 10px;
+      position: sticky;
+      top: 67px;
+      z-index: 40;
+      border-bottom: 1px solid rgba(8,145,178,0.07);
+    }
+    .progress-wrap-inner { max-width: 680px; margin: 0 auto; }
+    .progress-track { height: 3px; background: rgba(8,145,178,0.12); border-radius: 99px; overflow: hidden; }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 99px;
+      transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+      width: 16.67%;
+    }
+
+    /* ── Main ────────────────────────────────────────── */
+    .main { max-width: 680px; margin: 0 auto; padding: 32px 24px 100px; }
+
+    /* ── Steps ───────────────────────────────────────── */
+    .step { display: none; }
+    .step.active { display: block; animation: fadeUp 0.3s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Section Header ──────────────────────────────── */
+    .section-header { margin-bottom: 24px; }
+    .section-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--primary-light); color: var(--primary-dark);
+      font-size: 11px; font-weight: 700; padding: 3px 10px;
+      border-radius: 99px; margin-bottom: 10px;
+      letter-spacing: 0.6px; text-transform: uppercase;
+    }
+    .section-badge.accent { background: var(--accent-light); color: #92400E; }
+    .section-title { font-family: 'Figtree', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; line-height: 1.2; }
+    .section-desc { color: var(--muted); margin-top: 5px; font-size: 15px; }
+
+    /* ── Card ────────────────────────────────────────── */
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      padding: 28px; box-shadow: var(--shadow);
+      border: 1px solid rgba(8,145,178,0.07); margin-bottom: 14px;
+    }
+    .card-title { font-family: 'Figtree', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .card-title svg { color: var(--primary); }
+
+    /* ── Fields ──────────────────────────────────────── */
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    label { display: block; font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    label .req { color: var(--error); margin-left: 2px; }
+    label .opt { color: var(--muted); font-weight: 400; font-size: 11.5px; margin-left: 4px; }
+
+    input[type="text"], input[type="tel"], input[type="url"], input[type="number"], select, textarea {
+      width: 100%; padding: 10px 13px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: 'Noto Sans', sans-serif; font-size: 15px;
+      color: var(--text); background: white; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none; appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8,145,178,0.13); }
+    input.err, select.err, textarea.err { border-color: var(--error); box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234B7B77' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 11px center;
+      padding-right: 36px;
+    }
+
+    .field-hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .field-err-msg { font-size: 12px; color: var(--error); margin-top: 4px; display: none; }
+    .field-err-msg.show { display: block; }
+
+    .input-wrap { position: relative; }
+    .input-wrap .prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; line-height: 1; }
+    .input-wrap input { padding-left: 40px; }
+
+    /* ── Services ────────────────────────────────────── */
+    .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    @media (max-width: 480px) { .services-grid { grid-template-columns: 1fr; } }
+
+    .service-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 10px 13px; border: 1.5px solid var(--border);
+      border-radius: 8px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; user-select: none;
+    }
+    .service-item:hover { border-color: var(--secondary); background: #F0FDFA; }
+    .service-item.on { border-color: var(--primary); background: var(--primary-light); }
+    .service-item input[type="checkbox"] { width: 17px; height: 17px; min-width: 17px; accent-color: var(--primary); cursor: pointer; }
+    .service-label { font-size: 13.5px; font-weight: 500; color: var(--text); }
+
+    .services-err { font-size: 12px; color: var(--error); margin-top: 8px; display: none; }
+    .services-err.show { display: block; }
+    #otherServiceWrap { margin-top: 10px; display: none; }
+    #otherServiceWrap.show { display: block; }
+
+    /* ── Team Members ────────────────────────────────── */
+    .members-empty { text-align: center; padding: 32px 20px; color: var(--muted); border: 2px dashed var(--border); border-radius: 10px; margin-bottom: 12px; }
+    .members-empty svg { color: var(--primary); opacity: 0.4; margin: 0 auto 10px; display: block; }
+    .members-empty p { font-size: 14px; }
+
+    .member-card { background: #F8FCFD; border: 1.5px solid rgba(8,145,178,0.15); border-radius: 10px; padding: 20px; margin-bottom: 12px; }
+    .member-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .member-num { font-size: 13px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+
+    .btn-del {
+      background: none; border: 1.5px solid #FCA5A5; color: var(--error);
+      border-radius: 6px; padding: 3px 9px; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 4px;
+      font-family: 'Noto Sans', sans-serif;
+    }
+    .btn-del:hover { background: #FEF2F2; }
+
+    .member-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .member-grid { grid-template-columns: 1fr; } }
+    .member-grid .field { margin-bottom: 0; }
+    .member-photo-col { grid-column: span 2; }
+    @media (max-width: 500px) { .member-photo-col { grid-column: span 1; } }
+
+    .upload-zone {
+      border: 2px dashed var(--border); border-radius: 8px; padding: 18px;
+      text-align: center; cursor: pointer; transition: all 0.15s;
+      position: relative; background: white; overflow: hidden;
+    }
+    .upload-zone:hover { border-color: var(--primary); background: #F0FDFA; }
+    .upload-zone.has-img { border-style: solid; border-color: var(--primary); }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; padding: 0; }
+    .upload-img-preview { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin: 0 auto 8px; display: none; border: 2px solid var(--primary-light); }
+    .upload-text { font-size: 13px; color: var(--muted); }
+    .upload-text strong { color: var(--primary); }
+
+    /* ── Add button ──────────────────────────────────── */
+    .btn-add {
+      width: 100%; padding: 11px; border: 2px dashed var(--primary);
+      border-radius: 8px; background: none; color: var(--primary);
+      font-family: 'Noto Sans', sans-serif; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .btn-add:hover { background: var(--primary-light); }
+
+    /* ── Pricing Table ───────────────────────────────── */
+    .pricing-wrap { overflow-x: auto; }
+    .pricing-table { width: 100%; border-collapse: collapse; }
+    .pricing-table th {
+      text-align: left; font-size: 11.5px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px;
+      border-bottom: 2px solid var(--border); background: #F8FCFD; white-space: nowrap;
+    }
+    .pricing-table td { padding: 6px 6px; border-bottom: 1px solid #F0F4F5; vertical-align: middle; }
+    .pricing-table tr:last-child td { border-bottom: none; }
+    .pricing-table input { padding: 8px 10px; font-size: 14px; }
+    .diag-row td { background: var(--accent-light) !important; }
+    .diag-label { display: flex; align-items: center; gap: 6px; }
+    .diag-badge { font-size: 9.5px; font-weight: 800; background: var(--accent); color: white; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
+    .price-egp { position: relative; display: flex; align-items: center; }
+    .price-egp span { position: absolute; left: 13px; font-size: 13px; color: var(--muted); font-weight: 600; pointer-events: none; z-index: 1; }
+    .price-egp input { padding-left: 38px; width: 120px; }
+
+    .btn-del-row { background: none; border: none; color: #CBD5E1; cursor: pointer; padding: 5px; border-radius: 4px; transition: color 0.15s; display: flex; align-items: center; }
+    .btn-del-row:hover { color: var(--error); }
+
+    /* ── Navigation ──────────────────────────────────── */
+    .nav { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px; padding: 11px 22px;
+      border-radius: 8px; font-family: 'Noto Sans', sans-serif; font-size: 14.5px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s; border: none;
+      min-height: 44px; min-width: 44px;
+    }
+    .btn-back { background: white; color: var(--muted); border: 1.5px solid var(--border); }
+    .btn-back:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-next { background: var(--primary); color: white; margin-left: auto; }
+    .btn-next:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(8,145,178,0.3); }
+    .btn-submit { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; margin-left: auto; padding: 13px 32px; }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(8,145,178,0.35); }
+
+    /* ── Thank You ───────────────────────────────────── */
+    .thankyou { display: none; text-align: center; padding: 56px 20px; }
+    .thankyou.active { display: block; animation: fadeUp 0.4s ease both; }
+    .ty-icon { width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 22px; box-shadow: 0 8px 24px rgba(8,145,178,0.3); }
+    .thankyou h1 { font-family: 'Figtree', sans-serif; font-size: 30px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; margin-bottom: 10px; }
+    .thankyou p { color: var(--muted); font-size: 15.5px; max-width: 380px; margin: 0 auto; line-height: 1.7; }
+    .ty-note { display: inline-block; margin-top: 24px; color: var(--accent); font-weight: 600; font-size: 13.5px; background: var(--accent-light); padding: 8px 18px; border-radius: 99px; }
+
+    /* ── Misc ────────────────────────────────────────── */
+    .divider { height: 1px; background: rgba(8,145,178,0.08); margin: 20px 0; }
+
+    /* ── RTL overrides ───────────────────────────────── */
+    [dir="rtl"] .section-title { letter-spacing: 0; }
+    [dir="rtl"] select { background-position: left 11px center; padding-right: 13px; padding-left: 36px; }
+    [dir="rtl"] .input-wrap .prefix { left: auto; right: 12px; }
+    [dir="rtl"] .input-wrap input { padding-left: 13px; padding-right: 40px; }
+    [dir="rtl"] .btn-next,
+    [dir="rtl"] .btn-submit { margin-left: 0; margin-right: auto; }
+    [dir="rtl"] .pricing-table th { text-align: right; }
+    [dir="rtl"] #reviewCard { border-left: none; border-right: 3px solid var(--primary); }
+    [dir="rtl"] .diag-badge { letter-spacing: 0; }
+    [dir="rtl"] label .req,
+    [dir="rtl"] label .opt { margin-left: 0; margin-right: 4px; }
+    [dir="rtl"] .price-egp span { left: auto; right: 13px; }
+    [dir="rtl"] .price-egp input { padding-left: 10px; padding-right: 38px; }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 600px) {
+      .main { padding: 20px 14px 80px; }
+      .card { padding: 20px 16px; }
+      .section-title { font-size: 22px; }
+      .btn { flex: 1; justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ───────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <a class="logo" href="#">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="#0891B2"/>
+          <path d="M19.5 8C15.2 8 10.5 11.2 10.5 16C10.5 19.2 12 21.8 13.5 25.2L14.8 34L16.5 28L19.5 26.5L22.5 28L24.2 34L25.5 25.2C27 21.8 28.5 19.2 28.5 16C28.5 11.2 23.8 8 19.5 8Z" fill="white" opacity="0.93"/>
+          <path d="M30.5 6C28.6 6 27 7.6 27 9.5C27 11.8 30.5 15.5 30.5 15.5C30.5 15.5 34 11.8 34 9.5C34 7.6 32.4 6 30.5 6Z" fill="#C8912E"/>
+          <circle cx="30.5" cy="9.5" r="1.6" fill="white"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-name">Dental Map</span>
+          <span class="logo-tagline" data-i18n="logo-tagline">New Cairo · Clinic Registry</span>
+        </div>
+      </a>
+      <div class="header-right">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
+          <button class="lang-btn" id="btnAR" onclick="setLang('ar')">AR</button>
+        </div>
+        <span class="step-counter" id="stepCounter"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Progress Bar ──────────────────────────────────── -->
+  <div class="progress-wrap">
+    <div class="progress-wrap-inner">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main ─────────────────────────────────────────── -->
+  <main class="main" id="mainWrap">
+
+    <!-- ░░ STEP 1 — Clinic Info ░░ -->
+    <div class="step active" id="step-1">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span data-i18n="badge-1">Step 1 of 6</span>
+        </div>
+        <h1 class="section-title" data-i18n="title-1">Clinic Information</h1>
+        <p class="section-desc" data-i18n="desc-1">Let's start with your clinic's name. This is how you'll appear on Dental Map.</p>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label for="clinicName"><span data-i18n="label-clinic-name">Clinic Name</span> <span class="req">*</span></label>
+          <input type="text" id="clinicName" name="clinicName" data-i18n-ph="ph-clinic-name" placeholder="e.g. Smile Care Dental Center" autocomplete="organization" />
+          <div class="field-err-msg" id="clinicNameErr" data-i18n="err-clinic-name">Please enter your clinic name.</div>
+        </div>
+        <div class="field">
+          <label for="clinicAbout"><span data-i18n="label-about">About the Clinic</span> <span class="opt" data-i18n="optional">(optional)</span></label>
+          <textarea id="clinicAbout" name="clinicAbout" data-i18n-ph="ph-about" placeholder="Tell patients a bit about your clinic — your story, philosophy, what makes you special…" style="min-height: 100px;"></textarea>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-next" onclick="go(2)">
+          <span data-i18n="btn-continue">Continue</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ░░ STEP 2 — Services ░░ -->
+    <div class="step" id="step-2">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 8v4l3 3"/></svg>
+          <span data-i18n="badge-2">Step 2 of 6</span>
+        </div>
+        <h1 class="section-title" data-i18n="title-2">Services Offered</h1>
+        <p class="section-desc" data-i18n="desc-2">Select all the dental services your clinic provides.</p>
+      </div>
+      <div class="card">
+        <div class="services-grid" id="servicesGrid">
+
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Orthodontics" />
+            <span class="service-label" data-i18n="svc-ortho">Orthodontics (Braces &amp; Aligners)</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Restorations" />
+            <span class="service-label" data-i18n="svc-resto">Restorations</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Facial Aesthetics" />
+            <span class="service-label" data-i18n="svc-facial">Facial Aesthetics</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Dental Implants" />
+            <span class="service-label" data-i18n="svc-implants">Dental Implants</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Pediatric Dentistry" />
+            <span class="service-label" data-i18n="svc-pediatric">Pediatric Dentistry</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Oral Surgery" />
+            <span class="service-label" data-i18n="svc-surgery">Oral Surgery</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Teeth Whitening" />
+            <span class="service-label" data-i18n="svc-whitening">Teeth Whitening</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Veneers" />
+            <span class="service-label" data-i18n="svc-veneers">Veneers</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Root Canal" />
+            <span class="service-label" data-i18n="svc-rootcanal">Root Canal Treatment</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Periodontics" />
+            <span class="service-label" data-i18n="svc-perio">Periodontics (Gum Treatment)</span>
+          </label>
+          <label class="service-item">
+            <input type="checkbox" class="svc-cb" value="Dentures" />
+            <span class="service-label" data-i18n="svc-dentures">Dentures &amp; Prosthodontics</span>
+          </label>
+          <label class="service-item" id="otherCheckItem">
+            <input type="checkbox" class="svc-cb" value="Other" id="otherCb" />
+            <span class="service-label" data-i18n="svc-other">Other</span>
+          </label>
+
+        </div>
+        <div id="otherServiceWrap">
+          <input type="text" id="otherServiceText" data-i18n-ph="ph-other-svc" placeholder="Describe additional services..." style="margin-top: 10px;" />
+        </div>
+        <div class="services-err" id="servicesErr" data-i18n="err-services">Please select at least one service.</div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-back" onclick="go(1)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="btn-back">Back</span>
+        </button>
+        <button class="btn btn-next" onclick="go(3)">
+          <span data-i18n="btn-continue">Continue</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ░░ STEP 3 — Team Members ░░ -->
+    <div class="step" id="step-3">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <span data-i18n="badge-3">Step 3 of 6</span>
+        </div>
+        <h1 class="section-title" data-i18n="title-3">Team Members</h1>
+        <p class="section-desc" data-i18n="desc-3">Add your clinic's dentists and staff. You can skip this or add multiple members.</p>
+      </div>
+
+      <div id="membersContainer">
+        <div class="members-empty" id="membersEmpty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <p data-i18n="members-empty">No team members added yet. Click below to add your first member.</p>
+        </div>
+      </div>
+
+      <button type="button" class="btn-add" onclick="addMember()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        <span data-i18n="btn-add-member">Add Team Member</span>
+      </button>
+
+      <div class="nav" style="margin-top: 20px;">
+        <button class="btn btn-back" onclick="go(2)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="btn-back">Back</span>
+        </button>
+        <button class="btn btn-next" onclick="go(4)">
+          <span data-i18n="btn-continue">Continue</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ░░ STEP 4 — Location ░░ -->
+    <div class="step" id="step-4">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span data-i18n="badge-4">Step 4 of 6</span>
+        </div>
+        <h1 class="section-title" data-i18n="title-4">Clinic Location</h1>
+        <p class="section-desc" data-i18n="desc-4">Help patients find you. Be as specific as possible.</p>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label for="addressLine"><span data-i18n="label-address">Street Address</span> <span class="req">*</span></label>
+          <input type="text" id="addressLine" data-i18n-ph="ph-address" placeholder="e.g. 14 Al Amal Street, Building 3, Floor 2" />
+          <div class="field-err-msg" id="addressLineErr" data-i18n="err-address">Please enter a street address.</div>
+        </div>
+
+        <div class="field">
+          <label for="district"><span data-i18n="label-district">District / Neighbourhood</span> <span class="req">*</span></label>
+          <select id="district">
+            <option value="" disabled selected data-i18n-opt="ph-district">Select your district…</option>
+
+            <optgroup label="New Cairo / القاهرة الجديدة · التجمع">
+              <option value="5th Settlement">5th Settlement — التجمع الخامس</option>
+              <option value="1st Settlement">1st Settlement — التجمع الأول</option>
+              <option value="3rd Settlement">3rd Settlement — التجمع الثالث</option>
+              <option value="El Banafseg">El Banafseg — البنفسج</option>
+              <option value="El Lotus">El Lotus — اللوتس</option>
+              <option value="El Yasmeen">El Yasmeen — الياسمين</option>
+              <option value="Katameya">Katameya — القطامية</option>
+              <option value="Hyde Park Area">Hyde Park Area</option>
+              <option value="Palm Hills">Palm Hills</option>
+              <option value="Mivida">Mivida</option>
+              <option value="Rehab City">Rehab City — مدينة الرحاب</option>
+              <option value="Madinaty">Madinaty — مدينتي</option>
+              <option value="Shorouk City">Shorouk City — مدينة الشروق</option>
+              <option value="Badr City">Badr City — مدينة بدر</option>
+              <option value="Mostakbal City">Mostakbal City — مدينة المستقبل</option>
+            </optgroup>
+
+            <optgroup label="Nasr City / مدينة نصر">
+              <option value="Abbas El Akkad">Abbas El Akkad — عباس العقاد</option>
+              <option value="Makram Ebeid">Makram Ebeid — مكرم عبيد</option>
+              <option value="Mostafa El Nahas">Mostafa El Nahas — مصطفى النحاس</option>
+              <option value="El Tayaran">El Tayaran — الطيران</option>
+              <option value="El Ahrar">El Ahrar — الأحرار</option>
+              <option value="Nasr Road">Nasr Road — طريق النصر</option>
+              <option value="Ard El Golf">Ard El Golf — أرض الجولف</option>
+              <option value="City Stars Area">City Stars Area — سيتي ستارز</option>
+              <option value="El Nozha">El Nozha — النزهة</option>
+              <option value="Nasr City Other">Other in Nasr City — مدينة نصر أخرى</option>
+            </optgroup>
+
+            <option value="Other" data-i18n-opt="opt-other">Other</option>
+          </select>
+          <div class="field-err-msg" id="districtErr" data-i18n="err-district">Please select a district.</div>
+        </div>
+
+        <div class="field">
+          <label for="landmark"><span data-i18n="label-landmark">Nearest Landmark</span> <span class="opt" data-i18n="optional">(optional)</span></label>
+          <input type="text" id="landmark" data-i18n-ph="ph-landmark" placeholder="e.g. Beside Carrefour, next to Al Ahly Club" />
+        </div>
+
+        <div class="field">
+          <label for="mapsLink"><span data-i18n="label-maps">Google Maps Link</span> <span class="opt" data-i18n="optional">(optional)</span></label>
+          <input type="url" id="mapsLink" placeholder="https://maps.google.com/..." />
+          <div class="field-hint" data-i18n="hint-maps">Paste the link from Google Maps → Share → Copy link</div>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-back" onclick="go(3)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="btn-back">Back</span>
+        </button>
+        <button class="btn btn-next" onclick="go(5)">
+          <span data-i18n="btn-continue">Continue</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ░░ STEP 5 — Pricing ░░ -->
+    <div class="step" id="step-5">
+      <div class="section-header">
+        <div class="section-badge accent">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          <span data-i18n="badge-5">Step 5 of 6</span>
+        </div>
+        <h1 class="section-title" data-i18n="title-5">Pricing</h1>
+        <p class="section-desc" data-i18n="desc-5">List your service prices in EGP. The diagnosis fee is highlighted — patients ask about it most.</p>
+      </div>
+      <div class="card">
+        <div class="pricing-wrap">
+          <table class="pricing-table">
+            <thead>
+              <tr>
+                <th style="width: 55%"><span data-i18n="th-service">Service</span></th>
+                <th><span data-i18n="th-price">Price (EGP)</span></th>
+                <th style="width: 40px"></th>
+              </tr>
+            </thead>
+            <tbody id="pricingTbody">
+              <tr class="diag-row" id="diagRow">
+                <td>
+                  <div class="diag-label">
+                    <input type="text" id="diagService" data-i18n-val="val-diag" value="Diagnosis / Consultation" />
+                    <span class="diag-badge" data-i18n="badge-key">Key</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="price-egp">
+                    <span>EGP</span>
+                    <input type="number" id="diagPrice" placeholder="0" min="0" />
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="divider"></div>
+        <button type="button" class="btn-add" onclick="addPriceRow()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          <span data-i18n="btn-add-service">Add Another Service</span>
+        </button>
+      </div>
+      <div class="nav">
+        <button class="btn btn-back" onclick="go(4)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="btn-back">Back</span>
+        </button>
+        <button class="btn btn-next" onclick="go(6)">
+          <span data-i18n="btn-continue">Continue</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ░░ STEP 6 — Contact ░░ -->
+    <div class="step" id="step-6">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.6 19.79 19.79 0 01.21 2.18a2 2 0 012-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.06-1.06a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span data-i18n="badge-6">Step 6 of 6</span>
+        </div>
+        <h1 class="section-title" data-i18n="title-6">Contact Numbers</h1>
+        <p class="section-desc" data-i18n="desc-6">How should patients reach you? Add separate numbers if they differ.</p>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label for="phoneCall"><span data-i18n="label-phone">Phone Number (for calls)</span> <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="prefix">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.6 19.79 19.79 0 01.21 2.18a2 2 0 012-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.06-1.06a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            </span>
+            <input type="tel" id="phoneCall" placeholder="010 0000 0000" autocomplete="tel" />
+          </div>
+          <div class="field-err-msg" id="phoneCallErr" data-i18n="err-phone">Please enter a contact number.</div>
+        </div>
+        <div class="field">
+          <label for="phoneWp"><span data-i18n="label-wp">WhatsApp Number</span> <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="prefix">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            </span>
+            <input type="tel" id="phoneWp" placeholder="010 0000 0000" autocomplete="tel" />
+          </div>
+          <div class="field-err-msg" id="phoneWpErr" data-i18n="err-wp">Please enter a WhatsApp number.</div>
+          <div class="field-hint" data-i18n="hint-phone">Include country code if international, e.g. +20 010 …</div>
+        </div>
+      </div>
+
+      <div class="card" id="reviewCard" style="border-left: 3px solid var(--primary);">
+        <div class="card-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          <span data-i18n="review-title">Almost done! Review your entry</span>
+        </div>
+        <p style="font-size: 13.5px; color: var(--muted); line-height: 1.7;">
+          <span data-i18n="review-clinic">Clinic:</span> <strong id="reviewName" style="color: var(--text);">—</strong><br/>
+          <span data-i18n="review-district">District:</span> <strong id="reviewDistrict" style="color: var(--text);">—</strong><br/>
+          <span data-i18n="review-services">Services:</span> <strong id="reviewServices" style="color: var(--text);">—</strong>
+        </p>
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-back" onclick="go(5)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="btn-back">Back</span>
+        </button>
+        <button class="btn btn-submit" onclick="submitForm()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+          <span data-i18n="btn-submit">Submit Clinic</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ░░ THANK YOU ░░ -->
+    <div class="thankyou" id="thankyou">
+      <div class="ty-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h1 data-i18n="ty-title">You're on the map!</h1>
+      <p data-i18n="ty-desc">Thank you for registering your clinic with Dental Map. Our team will review your information and get back to you shortly.</p>
+      <span class="ty-note" data-i18n="ty-note">New Cairo's trusted dental directory</span>
+    </div>
+
+  </main>
+
+  <script>
+    /* ── Translations ─────────────────────────────────── */
+    const T = {
+      en: {
+        'logo-tagline':    'New Cairo · Clinic Registry',
+        'step-of':         (c, t) => `Step ${c} of ${t}`,
+        'submitted':       'Submitted!',
+        'badge-1': 'Step 1 of 6', 'badge-2': 'Step 2 of 6', 'badge-3': 'Step 3 of 6',
+        'badge-4': 'Step 4 of 6', 'badge-5': 'Step 5 of 6', 'badge-6': 'Step 6 of 6',
+        'title-1': 'Clinic Information',       'desc-1': "Let's start with your clinic's name. This is how you'll appear on Dental Map.",
+        'title-2': 'Services Offered',         'desc-2': 'Select all the dental services your clinic provides.',
+        'title-3': 'Team Members',             'desc-3': "Add your clinic's dentists and staff. You can skip this or add multiple members.",
+        'title-4': 'Clinic Location',          'desc-4': 'Help patients find you. Be as specific as possible.',
+        'title-5': 'Pricing',                  'desc-5': 'List your service prices in EGP. The diagnosis fee is highlighted — patients ask about it most.',
+        'title-6': 'Contact Numbers',          'desc-6': 'How should patients reach you? Add separate numbers if they differ.',
+        'label-clinic-name': 'Clinic Name',    'ph-clinic-name': 'e.g. Smile Care Dental Center',
+        'label-about': 'About the Clinic',     'ph-about': 'Tell patients a bit about your clinic — your story, philosophy, what makes you special…',
+        'label-address': 'Street Address',     'ph-address': 'e.g. 14 Al Amal Street, Building 3, Floor 2',
+        'label-district': 'District / Neighbourhood', 'ph-district': 'Select your district…',
+        'label-landmark': 'Nearest Landmark',  'ph-landmark': 'e.g. Beside Carrefour, next to Al Ahly Club',
+        'label-maps': 'Google Maps Link',      'hint-maps': 'Paste the link from Google Maps → Share → Copy link',
+        'label-phone': 'Phone Number (for calls)',
+        'label-wp': 'WhatsApp Number',         'hint-phone': 'Include country code if international, e.g. +20 010 …',
+        'optional': '(optional)',
+        'th-service': 'Service',               'th-price': 'Price (EGP)',
+        'val-diag': 'Diagnosis / Consultation','badge-key': 'Key',
+        'btn-add-service': 'Add Another Service',
+        'btn-add-member': 'Add Team Member',
+        'btn-continue': 'Continue',            'btn-back': 'Back',
+        'btn-submit': 'Submit Clinic',
+        'members-empty': 'No team members added yet. Click below to add your first member.',
+        'member-num': (n) => `Team Member #${n}`,
+        'member-label-name': 'Full Name',      'member-ph-name': 'Dr. Ahmed Hassan',
+        'member-label-role': 'Role / Specialization', 'member-ph-role': 'Orthodontist',
+        'member-label-photo': 'Profile Photo', 'member-upload-click': 'Click to upload',
+        'member-upload-sub': 'JPG, PNG · max 5 MB',
+        'member-label-bio': 'Bio & Certifications',
+        'member-ph-bio': 'e.g. Dr. Ahmed graduated from Cairo University with 10+ years in orthodontics. Fellowship from ABO.',
+        'btn-remove': 'Remove',
+        'ph-other-svc': 'Describe additional services...',
+        'ph-price-svc': 'Service name',
+        'review-title': 'Almost done! Review your entry',
+        'review-clinic': 'Clinic:', 'review-district': 'District:', 'review-services': 'Services:',
+        'ty-title': "You're on the map!", 'ty-note': "New Cairo's trusted dental directory",
+        'ty-desc': 'Thank you for registering your clinic with Dental Map. Our team will review your information and get back to you shortly.',
+        'err-clinic-name': 'Clinic name is required.',
+        'err-services': 'Please select at least one service.',
+        'err-address': 'Please enter a street address.',
+        'err-district': 'Please select a district.',
+        'err-phone': 'Please enter a contact number.',
+        'err-wp': 'Please enter a WhatsApp number.',
+        'svc-ortho': 'Orthodontics (Braces & Aligners)', 'svc-resto': 'Restorations',
+        'svc-facial': 'Facial Aesthetics', 'svc-implants': 'Dental Implants',
+        'svc-pediatric': 'Pediatric Dentistry', 'svc-surgery': 'Oral Surgery',
+        'svc-whitening': 'Teeth Whitening', 'svc-veneers': 'Veneers',
+        'svc-rootcanal': 'Root Canal Treatment', 'svc-perio': 'Periodontics (Gum Treatment)',
+        'svc-dentures': 'Dentures & Prosthodontics', 'svc-other': 'Other',
+        'opt-other': 'Other',
+      },
+      ar: {
+        'logo-tagline':    'القاهرة الجديدة · سجل العيادات',
+        'step-of':         (c, t) => `الخطوة ${c} من ${t}`,
+        'submitted':       'تم الإرسال!',
+        'badge-1': 'الخطوة ١ من ٦', 'badge-2': 'الخطوة ٢ من ٦', 'badge-3': 'الخطوة ٣ من ٦',
+        'badge-4': 'الخطوة ٤ من ٦', 'badge-5': 'الخطوة ٥ من ٦', 'badge-6': 'الخطوة ٦ من ٦',
+        'title-1': 'بيانات العيادة',           'desc-1': 'لنبدأ باسم عيادتك — هكذا ستظهر على Dental Map',
+        'title-2': 'الخدمات المقدمة',          'desc-2': 'اختر جميع خدمات طب الأسنان التي تقدمها عيادتك',
+        'title-3': 'فريق العمل',               'desc-3': 'أضف أطباء وموظفي عيادتك. يمكنك تخطي هذه الخطوة أو إضافة أكثر من عضو',
+        'title-4': 'موقع العيادة',             'desc-4': 'ساعد المرضى في العثور عليك. كن محدداً قدر الإمكان',
+        'title-5': 'الأسعار',                  'desc-5': 'أدخل أسعار خدماتك بالجنيه المصري. رسوم الكشف مميزة لأن المرضى يسألون عنها أكثر',
+        'title-6': 'أرقام التواصل',            'desc-6': 'كيف يتواصل معك المرضى؟ أضف أرقاماً مختلفة إن لزم الأمر',
+        'label-clinic-name': 'اسم العيادة',    'ph-clinic-name': 'مثال: مركز سمايل كير لطب الأسنان',
+        'label-about': 'نبذة عن العيادة',      'ph-about': 'أخبر المرضى قليلاً عن عيادتك — قصتك وما يميزك...',
+        'label-address': 'العنوان التفصيلي',   'ph-address': 'مثال: ١٤ شارع الأمل، مبنى ٣، الطابق ٢',
+        'label-district': 'الحي / المنطقة',    'ph-district': 'اختر منطقتك...',
+        'label-landmark': 'أقرب معلم',          'ph-landmark': 'مثال: بجانب كارفور، بجوار نادي الأهلي',
+        'label-maps': 'رابط خرائط جوجل',       'hint-maps': 'الصق الرابط من خرائط جوجل ← مشاركة ← نسخ الرابط',
+        'label-phone': 'رقم الهاتف (للمكالمات)',
+        'label-wp': 'رقم واتساب',              'hint-phone': 'أضف كود الدولة للأرقام الدولية، مثال: \u200E+20 010 …',
+        'optional': '(اختياري)',
+        'th-service': 'الخدمة',                'th-price': 'السعر (ج.م)',
+        'val-diag': 'كشف / استشارة',           'badge-key': 'أساسي',
+        'btn-add-service': 'إضافة خدمة أخرى',
+        'btn-add-member': 'إضافة عضو في الفريق',
+        'btn-continue': 'متابعة',              'btn-back': 'رجوع',
+        'btn-submit': 'إرسال بيانات العيادة',
+        'members-empty': 'لم تتم إضافة أعضاء الفريق بعد. انقر أدناه لإضافة العضو الأول',
+        'member-num': (n) => `عضو الفريق #${n}`,
+        'member-label-name': 'الاسم الكامل',   'member-ph-name': 'د. أحمد حسن',
+        'member-label-role': 'التخصص',         'member-ph-role': 'طبيب تقويم',
+        'member-label-photo': 'الصورة الشخصية','member-upload-click': 'انقر لرفع صورة',
+        'member-upload-sub': 'JPG, PNG · الحجم الأقصى ٥ ميجا',
+        'member-label-bio': 'نبذة والشهادات',
+        'member-ph-bio': 'مثال: تخرج الدكتور من جامعة القاهرة وخبرته تزيد عن ١٠ سنوات في التقويم...',
+        'btn-remove': 'حذف',
+        'ph-other-svc': 'صف الخدمات الإضافية...',
+        'ph-price-svc': 'اسم الخدمة',
+        'review-title': 'تقريباً انتهينا! راجع بياناتك',
+        'review-clinic': 'العيادة:', 'review-district': 'المنطقة:', 'review-services': 'الخدمات:',
+        'ty-title': 'وصلت البيانات!', 'ty-note': 'دليل طب الأسنان الموثوق في القاهرة الجديدة',
+        'ty-desc': 'شكراً لتسجيل عيادتك في Dental Map. سيقوم فريقنا بمراجعة معلوماتك والتواصل معك قريباً.',
+        'err-clinic-name': 'يرجى إدخال اسم العيادة.',
+        'err-services': 'يرجى اختيار خدمة واحدة على الأقل.',
+        'err-address': 'يرجى إدخال العنوان.',
+        'err-district': 'يرجى اختيار المنطقة.',
+        'err-phone': 'يرجى إدخال رقم الهاتف.',
+        'err-wp': 'يرجى إدخال رقم واتساب.',
+        'svc-ortho': 'تقويم الأسنان (تقليدي وشفاف)', 'svc-resto': 'ترميم الأسنان',
+        'svc-facial': 'جماليات الوجه', 'svc-implants': 'زراعة الأسنان',
+        'svc-pediatric': 'طب أسنان الأطفال', 'svc-surgery': 'جراحة الفم والأسنان',
+        'svc-whitening': 'تبييض الأسنان', 'svc-veneers': 'قشور الأسنان (فينير)',
+        'svc-rootcanal': 'علاج عصب الأسنان', 'svc-perio': 'علاج اللثة',
+        'svc-dentures': 'أطقم الأسنان والتركيبات', 'svc-other': 'أخرى',
+        'opt-other': 'أخرى',
+      }
+    };
+
+    /* ── State ────────────────────────────────────────── */
+    let lang = 'en';
+    let current = 1;
+    const TOTAL = 6;
+    let memberCount = 0;
+    let priceRowCount = 0;
+
+    /* ── i18n ─────────────────────────────────────────── */
+    function t(key, ...args) {
+      const val = T[lang][key];
+      return typeof val === 'function' ? val(...args) : (val || key);
+    }
+
+    function setLang(l) {
+      lang = l;
+      document.documentElement.lang = l;
+      document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+      document.getElementById('btnEN').classList.toggle('active', l === 'en');
+      document.getElementById('btnAR').classList.toggle('active', l === 'ar');
+
+      // Update static text nodes
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const v = T[l][el.dataset.i18n];
+        if (v !== undefined && typeof v === 'string') el.textContent = v;
+      });
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const v = T[l][el.dataset.i18nPh];
+        if (v) el.placeholder = v;
+      });
+      // Update values (inputs like the diagnosis field)
+      document.querySelectorAll('[data-i18n-val]').forEach(el => {
+        const v = T[l][el.dataset.i18nVal];
+        if (v) el.value = v;
+      });
+      // Update step counter
+      updateProgress();
+    }
+
+    /* ── Navigation ───────────────────────────────────── */
+    function go(target) {
+      if (target > current && !validate(current)) return;
+      const active = document.querySelector('.step.active');
+      if (active) active.classList.remove('active');
+      current = target;
+      const next = document.getElementById('step-' + current);
+      if (next) {
+        next.classList.add('active');
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (current === 6) populateReview();
+      }
+    }
+
+    function updateProgress() {
+      const pct = (current / TOTAL) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('stepCounter').textContent = t('step-of', current, TOTAL);
+    }
+
+    /* ── Validation ───────────────────────────────────── */
+    function validate(step) {
+      clearErrors();
+      if (step === 1) return validateStep1();
+      if (step === 2) return validateStep2();
+      if (step === 4) return validateStep4();
+      if (step === 6) return validateStep6();
+      return true;
+    }
+
+    function validateStep1() {
+      if (!document.getElementById('clinicName').value.trim()) {
+        showErr('clinicName', 'clinicNameErr', t('err-clinic-name')); return false;
+      }
+      return true;
+    }
+
+    function validateStep2() {
+      if (!document.querySelectorAll('.svc-cb:checked').length) {
+        document.getElementById('servicesErr').classList.add('show'); return false;
+      }
+      return true;
+    }
+
+    function validateStep4() {
+      let ok = true;
+      if (!document.getElementById('addressLine').value.trim()) {
+        showErr('addressLine', 'addressLineErr', t('err-address')); ok = false;
+      }
+      if (!document.getElementById('district').value) {
+        showErr('district', 'districtErr', t('err-district')); ok = false;
+      }
+      return ok;
+    }
+
+    function validateStep6() {
+      let ok = true;
+      if (!document.getElementById('phoneCall').value.trim()) {
+        showErr('phoneCall', 'phoneCallErr', t('err-phone')); ok = false;
+      }
+      if (!document.getElementById('phoneWp').value.trim()) {
+        showErr('phoneWp', 'phoneWpErr', t('err-wp')); ok = false;
+      }
+      return ok;
+    }
+
+    function showErr(fieldId, errId, msg) {
+      const f = document.getElementById(fieldId); if (f) f.classList.add('err');
+      const e = document.getElementById(errId); if (e) { e.textContent = msg; e.classList.add('show'); }
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.err').forEach(el => el.classList.remove('err'));
+      document.querySelectorAll('.field-err-msg, .services-err').forEach(el => el.classList.remove('show'));
+    }
+
+    /* ── Services ─────────────────────────────────────── */
+    document.querySelectorAll('.svc-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        cb.closest('.service-item').classList.toggle('on', cb.checked);
+        if (cb.id === 'otherCb') document.getElementById('otherServiceWrap').classList.toggle('show', cb.checked);
+        if (cb.checked) document.getElementById('servicesErr').classList.remove('show');
+      });
+    });
+
+    /* ── Team Members ─────────────────────────────────── */
+    function addMember() {
+      memberCount++;
+      const id = memberCount;
+      const empty = document.getElementById('membersEmpty');
+      if (empty) empty.style.display = 'none';
+
+      const card = document.createElement('div');
+      card.className = 'member-card';
+      card.id = 'member-' + id;
+      card.innerHTML = `
+        <div class="member-head">
+          <div class="member-num">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            ${t('member-num', id)}
+          </div>
+          <button type="button" class="btn-del" onclick="removeMember(${id})">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            ${t('btn-remove')}
+          </button>
+        </div>
+        <div class="member-grid">
+          <div class="field">
+            <label>${t('member-label-name')}</label>
+            <input type="text" name="memberName_${id}" placeholder="${t('member-ph-name')}" list="rolesList" />
+          </div>
+          <div class="field">
+            <label>${t('member-label-role')}</label>
+            <input type="text" name="memberRole_${id}" placeholder="${t('member-ph-role')}" list="rolesList" />
+          </div>
+          <div class="field member-photo-col">
+            <label>${t('member-label-photo')} <span class="opt">${t('optional')}</span></label>
+            <div class="upload-zone" id="zone_${id}">
+              <input type="file" accept="image/*" onchange="previewPhoto(this, ${id})" />
+              <img class="upload-img-preview" id="preview_${id}" alt="" />
+              <div id="uploadText_${id}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0891B2" stroke-width="1.5" style="margin: 0 auto 7px; display: block; opacity: 0.7;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <div class="upload-text"><strong>${t('member-upload-click')}</strong></div>
+                <div class="upload-text" style="margin-top: 2px; font-size: 11.5px;">${t('member-upload-sub')}</div>
+              </div>
+            </div>
+          </div>
+          <div class="field member-photo-col">
+            <label>${t('member-label-bio')} <span class="opt">${t('optional')}</span></label>
+            <textarea name="memberBio_${id}" placeholder="${t('member-ph-bio')}" style="min-height: 80px;"></textarea>
+          </div>
+        </div>
+      `;
+      document.getElementById('membersContainer').appendChild(card);
+    }
+
+    function removeMember(id) {
+      const el = document.getElementById('member-' + id);
+      if (el) el.remove();
+      if (!document.querySelectorAll('.member-card').length) {
+        const empty = document.getElementById('membersEmpty');
+        if (empty) empty.style.display = '';
+      }
+    }
+
+    function previewPhoto(input, id) {
+      const file = input.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('preview_' + id);
+        const text = document.getElementById('uploadText_' + id);
+        const zone = document.getElementById('zone_' + id);
+        preview.src = e.target.result; preview.style.display = 'block';
+        if (text) text.style.display = 'none';
+        if (zone) zone.classList.add('has-img');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ── Pricing ──────────────────────────────────────── */
+    function addPriceRow() {
+      priceRowCount++;
+      const id = priceRowCount;
+      const tr = document.createElement('tr');
+      tr.className = 'pricing-row';
+      tr.id = 'priceRow-' + id;
+      tr.innerHTML = `
+        <td><input type="text" name="priceSvc_${id}" placeholder="${t('ph-price-svc')}" /></td>
+        <td>
+          <div class="price-egp">
+            <span>EGP</span>
+            <input type="number" name="priceAmt_${id}" placeholder="0" min="0" />
+          </div>
+        </td>
+        <td>
+          <button type="button" class="btn-del-row" onclick="removePriceRow(${id})" aria-label="Remove">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </td>
+      `;
+      document.getElementById('pricingTbody').appendChild(tr);
+    }
+
+    function removePriceRow(id) {
+      const el = document.getElementById('priceRow-' + id); if (el) el.remove();
+    }
+
+    /* ── Review ───────────────────────────────────────── */
+    function populateReview() {
+      const name = document.getElementById('clinicName').value.trim() || '—';
+      const district = document.getElementById('district').value || '—';
+      const services = [...document.querySelectorAll('.svc-cb:checked')].map(cb => cb.value).join(', ') || '—';
+      document.getElementById('reviewName').textContent = name;
+      document.getElementById('reviewDistrict').textContent = district;
+      document.getElementById('reviewServices').textContent = services.length > 60 ? services.substring(0, 60) + '…' : services;
+    }
+
+    /* ── Submit ───────────────────────────────────────── */
+    function submitForm() {
+      if (!validate(6)) return;
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('thankyou').classList.add('active');
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('stepCounter').textContent = t('submitted');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ── Datalist ─────────────────────────────────────── */
+    const rolesList = document.createElement('datalist');
+    rolesList.id = 'rolesList';
+    ['General Dentist','Orthodontist','Cosmetic Dentist','Oral Surgeon',
+     'Endodontist','Periodontist','Pediatric Dentist','Dental Assistant',
+     'Receptionist','Practice Manager'].forEach(r => {
+      const o = document.createElement('option'); o.value = r; rolesList.appendChild(o);
+    });
+    document.body.appendChild(rolesList);
+
+    /* ── Init ─────────────────────────────────────────── */
+    setLang('en');
+  </script>
+</body>
+</html>

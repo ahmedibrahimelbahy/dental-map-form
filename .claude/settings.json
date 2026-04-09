@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python scripts/search.py \"healthcare dental medical professional form elegant\" --design-system -p \"Dental Map\" -f markdown)",
+      "Bash(python scripts/search.py \"form validation multi-step upload\" --domain ux -n 5)",
+      "Bash(start \"\" \"d:\\\\Projects\\\\Form\\\\index.html\")",
+      "Bash(git -C \"d:/Projects/Form\" remote -v)",
+      "Bash(gh auth:*)",
+      "Bash(vercel whoami:*)",
+      "Bash(git config:*)"
+    ]
+  }
+}
