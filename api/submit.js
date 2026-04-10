@@ -12,7 +12,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const fields = req.body;
+    const body = req.body;
+
+    // Extract photo URLs from team members and format as Airtable attachments
+    // The form sends teamPhotos as an array of { url, filename } objects
+    const fields = { ...body };
+
+    if (Array.isArray(body.teamPhotos) && body.teamPhotos.length > 0) {
+      fields['Team Photos'] = body.teamPhotos.map(p => ({
+        url: p.url,
+        filename: p.filename || 'photo.jpg',
+      }));
+    }
+    delete fields.teamPhotos; // remove raw array before sending
 
     const airtableRes = await fetch(
       `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`,

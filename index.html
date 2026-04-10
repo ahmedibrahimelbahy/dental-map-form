@@ -1141,8 +1141,16 @@
         // Upload photos & collect team data
         const teamMembers = await collectTeamMembers();
         const teamText = teamMembers.map(m =>
-          `• ${m.name}${m.role ? ' — ' + m.role : ''}${m.bio ? '\n  ' + m.bio : ''}${m.photo ? '\n  Photo: ' + m.photo : ''}`
+          `• ${m.name}${m.role ? ' — ' + m.role : ''}${m.bio ? '\n  ' + m.bio : ''}`
         ).join('\n\n');
+
+        // Build photo attachments array for Airtable
+        const teamPhotos = teamMembers
+          .filter(m => m.photo)
+          .map(m => ({
+            url: m.photo,
+            filename: `${m.name || 'member'}.jpg`
+          }));
 
         const services = [...document.querySelectorAll('.svc-cb:checked')].map(cb => cb.value).join(', ');
         const otherSvc = document.getElementById('otherServiceText')?.value.trim();
@@ -1161,6 +1169,7 @@
           'Phone (WhatsApp)':    document.getElementById('phoneWp').value.trim(),
           'Language':            lang === 'ar' ? 'Arabic' : 'English',
           'Submitted At':        new Date().toISOString(),
+          teamPhotos:            teamPhotos,
         };
 
         // Remove empty fields
