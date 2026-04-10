@@ -24,7 +24,15 @@ export default async function handler(req, res) {
         filename: p.filename || 'photo.jpg',
       }));
     }
-    delete fields.teamPhotos; // remove raw array before sending
+    delete fields.teamPhotos;
+
+    if (Array.isArray(body.clinicLogo) && body.clinicLogo.length > 0) {
+      fields['Clinic Logo'] = body.clinicLogo.map(p => ({
+        url: p.url,
+        filename: p.filename || 'logo.jpg',
+      }));
+    }
+    delete fields.clinicLogo;
 
     const airtableRes = await fetch(
       `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`,
