@@ -1254,6 +1254,22 @@
       return data.secure_url;
     }
 
+    /* ── Upload any media (image or video) to Cloudinary ─ */
+    async function uploadMedia(file) {
+      const isVideo = file.type.startsWith('video/');
+      const resourceType = isVideo ? 'video' : 'image';
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', CLOUDINARY_PRESET);
+      fd.append('folder', isVideo ? 'dental-map/clinic-videos' : 'dental-map/clinic-photos');
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`, {
+        method: 'POST', body: fd
+      });
+      if (!res.ok) throw new Error('Cloudinary upload failed: ' + res.status);
+      const data = await res.json();
+      return { url: data.secure_url, resource_type: resourceType };
+    }
+
     /* ── Collect team members ─────────────────────────── */
     async function collectTeamMembers() {
       const cards = document.querySelectorAll('.member-card');
