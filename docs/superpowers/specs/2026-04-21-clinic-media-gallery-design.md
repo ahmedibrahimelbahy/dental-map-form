@@ -45,12 +45,12 @@ Add a new Step 7 to the clinic registration form for uploading clinic photos and
 - **Counter:** "{N} صورة · {M} فيديو"
 
 ### Interaction
-- Single drop zone spans the card width. Click or drag-and-drop to add files.
+- Single drop zone spans the card width. Click to open a file picker (multiple selection enabled) — matches existing form pattern, no drag-and-drop in v1.
 - As users add files, a responsive thumbnail grid appears below the drop zone.
-- Each thumbnail:
-  - **Image:** object-fit cover preview
-  - **Video:** frame thumbnail (from Cloudinary's auto-generated `.jpg` derivative, set at upload time — see "Upload pipeline") with a centered play-icon overlay and a duration badge
-  - Small × button visible on hover to remove the asset
+- Each thumbnail is rendered locally from the `File` object via `URL.createObjectURL()` — no network call until submit:
+  - **Image:** `<img>` with object-fit cover
+  - **Video:** `<video preload="metadata">` tag (first frame shows automatically), with a centered play-icon overlay and a duration badge. Duration is read from the `<video>` element's `duration` property after its `loadedmetadata` event fires.
+  - Small × button visible on hover to remove the asset (also revokes the object URL to avoid leaks).
 - Live counter below the grid shows current photo/video count; turns red and shows an inline error if limits are exceeded.
 - All fields optional. The Submit button works with zero media attached.
 
@@ -72,9 +72,9 @@ Rejections surface as inline error text under the drop zone (matches existing fo
   - `image/*` → `https://api.cloudinary.com/v1_1/{CLOUD}/image/upload`
   - `video/*` → `https://api.cloudinary.com/v1_1/{CLOUD}/video/upload`
 - Same unsigned preset (`dental_map_unsigned`) for both.
-- Uploads fire on form submit (matches current `teamPhotos` / `clinicLogo` pattern).
+- Uploads fire on form submit (matches current `teamPhotos` / `clinicLogo` pattern). Thumbnails during editing use local `URL.createObjectURL()` previews — no Cloudinary round-trip until submit.
 - Submit button shows a progress indicator: "Uploading {done} / {total}…" so users get feedback during a potentially minute-plus video upload.
-- For videos, Cloudinary returns a `secure_url` and we derive the poster thumbnail from the same public ID by swapping the extension to `.jpg` (e.g., `/video/upload/v123/clinic_xyz.jpg`). This is used purely for in-form preview; the stored attachment is the video URL.
+- After upload, store Cloudinary's returned `secure_url` and the original filename in the submission payload. `resource_type` is inferred from the original MIME type (already known client-side before upload).
 
 ## Data flow
 
