@@ -241,6 +241,72 @@
     .upload-text { font-size: 13px; color: var(--muted); }
     .upload-text strong { color: var(--primary); }
 
+    /* ── Media Gallery (Step 7) ──────────────────────── */
+    .media-counter {
+      font-size: 12.5px; color: var(--muted); margin-top: 8px;
+      font-weight: 500;
+    }
+    .media-counter[data-empty="true"] { display: none; }
+    .media-counter.err { color: var(--error); font-weight: 600; }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .media-grid:empty { margin-top: 0; }
+
+    .media-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid var(--primary-light);
+      background: #000;
+    }
+    .media-item img, .media-item video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .media-item .play-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.25);
+      pointer-events: none;
+    }
+    .media-item .play-overlay svg {
+      width: 34px; height: 34px; color: white;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    }
+    .media-item .duration-badge {
+      position: absolute; bottom: 6px; right: 6px;
+      background: rgba(0,0,0,0.75); color: white;
+      font-size: 10.5px; font-weight: 600;
+      padding: 2px 6px; border-radius: 4px;
+      pointer-events: none;
+      font-variant-numeric: tabular-nums;
+    }
+    .media-item .remove-btn {
+      position: absolute; top: 5px; right: 5px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(0,0,0,0.7); border: none;
+      color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.15s;
+      padding: 0;
+    }
+    .media-item:hover .remove-btn,
+    .media-item:focus-within .remove-btn { opacity: 1; }
+    .media-item .remove-btn:hover { background: var(--error); }
+
+    .submit-progress {
+      font-size: 12.5px; color: var(--muted);
+      margin-top: 8px; text-align: center;
+      font-weight: 500;
+    }
+
     /* ── Add button ──────────────────────────────────── */
     .btn-add {
       width: 100%; padding: 11px; border: 2px dashed var(--primary);
