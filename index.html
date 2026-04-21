@@ -299,6 +299,11 @@
     }
     .media-item:hover .remove-btn,
     .media-item:focus-within .remove-btn { opacity: 1; }
+    .media-item .remove-btn:focus-visible {
+      opacity: 1;
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
     .media-item .remove-btn:hover { background: var(--error); }
 
     .submit-progress {
@@ -379,6 +384,8 @@
     [dir="rtl"] label .opt { margin-left: 0; margin-right: 4px; }
     [dir="rtl"] .price-egp span { left: auto; right: 13px; }
     [dir="rtl"] .price-egp input { padding-left: 10px; padding-right: 38px; }
+    [dir="rtl"] .media-item .remove-btn    { right: auto; left: 5px; }
+    [dir="rtl"] .media-item .duration-badge { right: auto; left: 6px; }
 
     /* ── Responsive ──────────────────────────────────── */
     @media (max-width: 600px) {
