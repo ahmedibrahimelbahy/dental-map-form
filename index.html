@@ -1270,6 +1270,134 @@
       return { url: data.secure_url, resource_type: resourceType };
     }
 
+    /* ── Media Gallery (Step 7) ──────────────────────── */
+    const MEDIA_LIMITS = {
+      photoMax: 20, videoMax: 5,
+      photoSize: 10 * 1024 * 1024,   // 10 MB
+      videoSize: 100 * 1024 * 1024,  // 100 MB
+      imageTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'],
+      videoTypes: ['video/mp4', 'video/quicktime', 'video/webm'],
+    };
+
+    // Each entry: { id, file, kind: 'image'|'video', previewUrl }
+    let mediaItems = [];
+    let mediaIdSeq = 0;
+
+    function formatDuration(seconds) {
+      if (!isFinite(seconds) || seconds < 0) return '';
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function showMediaError(key) {
+      const el = document.getElementById('mediaErr');
+      el.textContent = t(key);
+      el.classList.add('show');
+    }
+
+    function clearMediaError() {
+      const el = document.getElementById('mediaErr');
+      el.textContent = '';
+      el.classList.remove('show');
+    }
+
+    function updateMediaCounter() {
+      const counter = document.getElementById('mediaCounter');
+      const photos = mediaItems.filter(m => m.kind === 'image').length;
+      const videos = mediaItems.filter(m => m.kind === 'video').length;
+      if (photos === 0 && videos === 0) {
+        counter.dataset.empty = 'true';
+        counter.textContent = '';
+      } else {
+        counter.dataset.empty = 'false';
+        counter.textContent = t('media-counter', photos, videos);
+      }
+      counter.classList.toggle('err',
+        photos > MEDIA_LIMITS.photoMax || videos > MEDIA_LIMITS.videoMax);
+    }
+
+    function renderMediaItem(item) {
+      const grid = document.getElementById('mediaGrid');
+      const wrap = document.createElement('div');
+      wrap.className = 'media-item';
+      wrap.dataset.id = item.id;
+
+      if (item.kind === 'image') {
+        wrap.innerHTML = `
+          <img src="${item.previewUrl}" alt="" />
+          <button type="button" class="remove-btn" onclick="removeMediaItem(${item.id})" aria-label="Remove">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        `;
+      } else {
+        wrap.innerHTML = `
+          <video src="${item.previewUrl}" preload="metadata" muted playsinline></video>
+          <div class="play-overlay">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="duration-badge" id="dur-${item.id}"></span>
+          <button type="button" class="remove-btn" onclick="removeMediaItem(${item.id})" aria-label="Remove">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        `;
+        const videoEl = wrap.querySelector('video');
+        videoEl.addEventListener('loadedmetadata', () => {
+          const badge = document.getElementById('dur-' + item.id);
+          if (badge) badge.textContent = formatDuration(videoEl.duration);
+        });
+      }
+
+      grid.appendChild(wrap);
+    }
+
+    function handleMediaSelect(input) {
+      clearMediaError();
+      const files = Array.from(input.files || []);
+      input.value = ''; // allow re-selecting the same file after removal
+
+      let currentPhotos = mediaItems.filter(m => m.kind === 'image').length;
+      let currentVideos = mediaItems.filter(m => m.kind === 'video').length;
+
+      for (const file of files) {
+        const isImage = MEDIA_LIMITS.imageTypes.includes(file.type);
+        const isVideo = MEDIA_LIMITS.videoTypes.includes(file.type);
+        if (!isImage && !isVideo) { showMediaError('err-wrong-type'); continue; }
+
+        if (isImage) {
+          if (file.size > MEDIA_LIMITS.photoSize) { showMediaError('err-photo-too-large'); continue; }
+          if (currentPhotos >= MEDIA_LIMITS.photoMax) { showMediaError('err-too-many-photos'); continue; }
+          currentPhotos++;
+        } else {
+          if (file.size > MEDIA_LIMITS.videoSize) { showMediaError('err-video-too-large'); continue; }
+          if (currentVideos >= MEDIA_LIMITS.videoMax) { showMediaError('err-too-many-videos'); continue; }
+          currentVideos++;
+        }
+
+        const item = {
+          id: ++mediaIdSeq,
+          file,
+          kind: isImage ? 'image' : 'video',
+          previewUrl: URL.createObjectURL(file),
+        };
+        mediaItems.push(item);
+        renderMediaItem(item);
+      }
+
+      updateMediaCounter();
+    }
+
+    function removeMediaItem(id) {
+      const idx = mediaItems.findIndex(m => m.id === id);
+      if (idx === -1) return;
+      URL.revokeObjectURL(mediaItems[idx].previewUrl);
+      mediaItems.splice(idx, 1);
+      const node = document.querySelector(`.media-item[data-id="${id}"]`);
+      if (node) node.remove();
+      clearMediaError();
+      updateMediaCounter();
+    }
+
     /* ── Collect team members ─────────────────────────── */
     async function collectTeamMembers() {
       const cards = document.querySelectorAll('.member-card');
