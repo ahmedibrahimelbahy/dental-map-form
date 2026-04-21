@@ -34,6 +34,19 @@ export default async function handler(req, res) {
     }
     delete fields.clinicLogo;
 
+    // Split clinicMedia by resource_type into two attachment fields
+    if (Array.isArray(body.clinicMedia) && body.clinicMedia.length > 0) {
+      const photos = body.clinicMedia
+        .filter(m => m.resource_type === 'image')
+        .map(m => ({ url: m.url, filename: m.filename || 'photo.jpg' }));
+      const videos = body.clinicMedia
+        .filter(m => m.resource_type === 'video')
+        .map(m => ({ url: m.url, filename: m.filename || 'video.mp4' }));
+      if (photos.length) fields['Clinic Photos'] = photos;
+      if (videos.length) fields['Clinic Videos'] = videos;
+    }
+    delete fields.clinicMedia;
+
     const airtableRes = await fetch(
       `https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`,
       {
