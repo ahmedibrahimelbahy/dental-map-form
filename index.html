@@ -713,6 +713,42 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           <span data-i18n="btn-back">Back</span>
         </button>
+        <button class="btn btn-next" onclick="go(7)">
+          <span data-i18n="btn-continue">Continue</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ░░ STEP 7 — Clinic Media ░░ -->
+    <div class="step" id="step-7">
+      <div class="section-header">
+        <div class="section-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <span data-i18n="badge-7">Step 7 of 7</span>
+        </div>
+        <h1 class="section-title" data-i18n="title-7">Clinic Media</h1>
+        <p class="section-desc" data-i18n="desc-7">Upload photos and a video tour of your clinic. Optional but highly recommended — clinics with media get 3× more patient inquiries.</p>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label><span data-i18n="label-media">Photos &amp; Videos</span> <span class="opt" data-i18n="optional">(optional)</span></label>
+          <div class="upload-zone" id="mediaZone">
+            <input type="file" id="mediaInput" accept="image/jpeg,image/png,image/webp,image/svg+xml,video/mp4,video/quicktime,video/webm" multiple onchange="handleMediaSelect(this)" />
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0891B2" stroke-width="1.5" style="margin: 0 auto 7px; display: block; opacity: 0.7;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <div class="upload-text"><strong data-i18n="upload-media-click">Click to upload photos or videos</strong></div>
+            <div class="upload-text" style="margin-top:2px;font-size:11.5px;" data-i18n="upload-media-sub">Images up to 10 MB · Videos up to 100 MB</div>
+          </div>
+          <div class="media-counter" id="mediaCounter" data-empty="true"></div>
+          <div class="field-err-msg" id="mediaErr"></div>
+          <div class="media-grid" id="mediaGrid"></div>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn btn-back" onclick="go(6)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="btn-back">Back</span>
+        </button>
         <button class="btn btn-submit" onclick="submitForm()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
           <span data-i18n="btn-submit">Submit Clinic</span>
