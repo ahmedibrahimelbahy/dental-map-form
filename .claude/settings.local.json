@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"D:/Projects/Form\" add docs/superpowers/specs/2026-04-21-clinic-media-gallery-design.md)",
+      "Bash(git -C D:/Projects/Form commit -m ' *)",
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(vercel --yes)",
+      "Bash(vercel --prod --yes)"
+    ]
+  }
+}

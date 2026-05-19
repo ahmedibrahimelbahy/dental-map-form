@@ -7,3 +7,6 @@ out/
 .env.local
 .env*.local
 *.pem
+
+.vercel
+.env*.local

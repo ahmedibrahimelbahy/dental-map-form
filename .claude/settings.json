@@ -7,7 +7,11 @@
       "Bash(git -C \"d:/Projects/Form\" remote -v)",
       "Bash(gh auth:*)",
       "Bash(vercel whoami:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(gh repo:*)",
+      "Bash(start \"\" \"d:/Projects/Form/index.html\")",
+      "Bash(vercel env:*)",
+      "Bash(python -c ':*)"
     ]
   }
 }
